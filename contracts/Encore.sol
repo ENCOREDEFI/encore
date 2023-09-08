@@ -7,19 +7,22 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-// Custom interface for IERC1363Receiver
 interface IERC1363Receiver {
     function onTransferReceived(address operator, address from, uint256 value, bytes calldata data) external returns (bytes4);
 }
 
-// Custom interface for IERC677Receiver
 interface IERC677Receiver {
     function onTokenTransfer(address operator, address from, uint256 value, bytes calldata data) external;
 }
 
 contract ENCORE is ERC20, ERC20Snapshot, Ownable, ERC20Permit, ERC20Votes {
-    constructor() ERC20("ENCORE", "ENC") ERC20Permit("ENCORE") {
-        _mint(msg.sender, 3500000000 * 10 ** decimals());
+    string constant private _name = "ENCORE";
+    string constant private _symbol = "ENC";
+    uint8 constant private _decimals = 18;
+    uint256 constant private _initialSupply = 3_500_000_000 * (10 ** uint256(_decimals));
+
+    constructor() ERC20(_name, _symbol) ERC20Permit(_name) {
+        _mint(msg.sender, _initialSupply);
     }
 
     function snapshot() public onlyOwner {
@@ -33,13 +36,10 @@ contract ENCORE is ERC20, ERC20Snapshot, Ownable, ERC20Permit, ERC20Votes {
         super._beforeTokenTransfer(from, to, amount);
     }
 
-    // Override the _burn function to resolve the conflict
     function _burn(address account, uint256 amount) internal override(ERC20, ERC20Votes) {
         super._burn(account, amount);
     }
 
-    // The following functions are overrides required by Solidity.
-    
     function _afterTokenTransfer(address from, address to, uint256 amount)
         internal
         override(ERC20, ERC20Votes)
@@ -55,14 +55,9 @@ contract ENCORE is ERC20, ERC20Snapshot, Ownable, ERC20Permit, ERC20Votes {
     }
 
     function onTransferReceived(address, address, uint256, bytes calldata) external pure returns (bytes4) {
-        // Implement the logic you want when tokens are received.
-        // For example, you can use the data to process additional information.
-        // Return the ERC1363_RECEIVED value to indicate success.
         return IERC1363Receiver(address(0)).onTransferReceived.selector;
     }
 
     function onTokenTransfer(address operator, address from, uint256 value, bytes calldata data) external {
-        // Implement the logic you want when tokens are received.
-        // For example, you can use the data to process additional information.
     }
 }
