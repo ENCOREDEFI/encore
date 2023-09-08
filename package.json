@@ -1,0 +1,26 @@
+{
+  "name": "encore",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ENCOREDEFI/encore.git"
+  },
+  "author": "ENCORE DEFI",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ENCOREDEFI/encore/issues"
+  },
+  "homepage": "https://github.com/ENCOREDEFI/encore#readme",
+  "devDependencies": {
+    "hardhat": "^2.17.2"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.9.3",
+    "dotenv": "^16.3.1"
+  }
+}
