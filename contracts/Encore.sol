@@ -1,19 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-interface IERC1363Receiver {
-    function onTransferReceived(address operator, address from, uint256 value, bytes calldata data) external returns (bytes4);
-}
-
-interface IERC677Receiver {
-    function onTokenTransfer(address operator, address from, uint256 value, bytes calldata data) external;
-}
-
 contract ENCOREToken {
     string constant private _name = "ENCORE";
     string constant private _symbol = "ENC";
     uint8 constant private _decimals = 18;
     uint256 constant private _initialSupply = 3_500_000_000 * (10 ** uint256(_decimals));
+
+    address private _owner;
 
     mapping(address => uint256) private _balances;
     mapping(address => mapping(address => uint256)) private _allowances;
@@ -29,6 +23,12 @@ contract ENCOREToken {
 
     constructor() {
         _mint(msg.sender, _initialSupply);
+        _owner = msg.sender;
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == _owner, "Only the contract owner can call this function");
+        _;
     }
 
     function name() public pure returns (string memory) {
@@ -110,7 +110,7 @@ contract ENCOREToken {
         emit Approval(owner, spender, amount);
     }
 
-    function snapshot() public {
+    function snapshot() public onlyOwner {
         uint256 id = _snapshots.length;
         _snapshots.push(block.number);
 
@@ -130,13 +130,5 @@ contract ENCOREToken {
 
     function allowanceAt(address owner, address spender, uint256 snapshotId) public view returns (uint256) {
         return _snapshotAllowances[snapshotId][owner][spender];
-    }
-
-    function onTransferReceived(address, address, uint256, bytes calldata) external pure returns (bytes4) {
-        return IERC1363Receiver(address(0)).onTransferReceived.selector;
-    }
-
-    function onTokenTransfer(address operator, address from, uint256 value, bytes calldata data) external {
-        // Implement your onTokenTransfer logic here
     }
 }
