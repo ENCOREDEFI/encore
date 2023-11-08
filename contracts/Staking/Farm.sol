@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.2;
 
 
 library Address {
@@ -623,8 +623,8 @@ contract Farm is ReentrancyGuard, Pausable, Ownable {
 
     /* ========== STATE VARIABLES ========== */
 
-    IERC20 public rewardsToken;
-    IERC20 public stakingToken;
+    immutable IERC20 public rewardsToken;
+    immutable IERC20 public stakingToken;
     uint256 public periodFinish = 0;
     uint256 public rewardRate = 0;
     uint256 public rewardsDuration;
@@ -638,6 +638,7 @@ contract Farm is ReentrancyGuard, Pausable, Ownable {
 
     uint256 private _totalSupply;
     mapping(address => uint256) private _balances;
+
 
     /* ========== CONSTRUCTOR ========== */
 
@@ -806,15 +807,19 @@ contract Farm is ReentrancyGuard, Pausable, Ownable {
         IERC20(tokenAddress).safeTransfer(msg.sender, tokenAmount);
         emit Recovered(tokenAddress, tokenAmount);
     }
-
-    function setRewardsDuration(uint256 _rewardsDuration) external onlyOwner {
-        require(
-            block.timestamp > periodFinish,
-            "Previous rewards period must be complete before changing the duration for the new period"
-        );
-        rewardsDuration = _rewardsDuration;
-        emit RewardsDurationUpdated(rewardsDuration);
-    }
+	
+	function setRewardsDuration(uint256 _rewardsDuration) external onlyOwner {
+		require(
+			block.timestamp > periodFinish,
+			"Previous rewards period must be complete before changing the duration for the new period"
+		);
+		require(
+			_rewardsDuration > 0,
+			"Rewards duration must be a positive value"
+		);
+		rewardsDuration = _rewardsDuration;
+		emit RewardsDurationUpdated(rewardsDuration);
+	}
 
     /* ========== MODIFIERS ========== */
 
