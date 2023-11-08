@@ -73,19 +73,20 @@ contract ERC20 {
 
 contract EthTokenToSmthSwaps {
 
-  using SafeMath for uint;
+	using SafeMath for uint;
 
-  address public owner;
-  uint256 SafeTime = 1 hours; // atomic swap timeOut
+	address public owner;
+	uint256 constant SafeTime = 1 hours; // atomic swap timeOut
+	uint256 constant closeByAdminTimeout = 355 days;
 
-  struct Swap {
-    address token;
-    address payable targetWallet;
-    bytes32 secret;
-    bytes20 secretHash;
-    uint256 createdAt;
-    uint256 balance;
-  }
+	struct Swap {
+	  address token;
+	  address payable targetWallet;
+	  bytes32 secret;
+	  bytes20 secretHash;
+	  uint256 createdAt;
+	  uint256 balance;
+	}
 
   // ETH Owner => BTC Owner => Swap
   mapping(address => mapping(address => Swap)) public swaps;
